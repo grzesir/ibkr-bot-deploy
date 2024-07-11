@@ -1,6 +1,2 @@
-build:
-  docker:
-    release: environment/Dockerfile
-
-run:
-  release: ./deploy.sh
+release: ./deploy.sh
+worker: ./mon.sh  # Adjust this if you have a different worker script
