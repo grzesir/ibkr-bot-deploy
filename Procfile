@@ -1,2 +1,6 @@
-release: chmod u+x deploy.sh && ./deploy.sh
-worker: python main.py
+build:
+  docker:
+    release: environment/Dockerfile
+
+run:
+  release: ./deploy.sh
