@@ -21,11 +21,11 @@ docker ps --format "{{.Names}}" | grep 'ib-gateway' | xargs -r docker kill > /de
 rm -f "$dir/.env"
 
 # Ensure all required environment variables are set
-: "${IBKR_USERNAME:?Environment variable IBKR_USERNAME is required}"
-: "${IBKR_PASSWORD:?Environment variable IBKR_PASSWORD is required}"
-: "${LUMIBOT_STRATEGY_GITHUB_URL:?Environment variable LUMIBOT_STRATEGY_GITHUB_URL is required}"
-: "${TRADING_MODE:?Environment variable TRADING_MODE is required}"
-: "${CONFIG_CHOICE:?Environment variable CONFIG_CHOICE is required}"
+: "${IBKR_USERNAME:?Environment variable IBKR_USERNAME is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
+: "${IBKR_PASSWORD:?Environment variable IBKR_PASSWORD is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
+: "${LUMIBOT_STRATEGY_GITHUB_URL:?Environment variable LUMIBOT_STRATEGY_GITHUB_URL is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
+: "${TRADING_MODE:?Environment variable TRADING_MODE is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
+: "${CONFIG_CHOICE:?Environment variable CONFIG_CHOICE is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
 
 # Normalize the IBKR_IS_PAPER variable to lowercase
 IBKR_IS_PAPER=$(echo "${IBKR_IS_PAPER:-true}" | tr '[:upper:]' '[:lower:]')
