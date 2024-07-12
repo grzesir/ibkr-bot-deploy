@@ -14,8 +14,8 @@ fi
 cd "$dir"
 
 # Free ports
-sudo docker ps --format "{{.Names}}" | grep 'strategy' | xargs -r sudo docker kill > /dev/null
-sudo docker ps --format "{{.Names}}" | grep 'ib-gateway' | xargs -r sudo docker kill > /dev/null
+docker ps --format "{{.Names}}" | grep 'strategy' | xargs -r docker kill > /dev/null
+docker ps --format "{{.Names}}" | grep 'ib-gateway' | xargs -r docker kill > /dev/null
 
 # Reset .env if any
 rm -f "$dir/.env"
@@ -50,11 +50,11 @@ elif [ "$choice" == "5" ]; then
     echo "[*] Settings Reset"
 
 elif [ "$choice" == "6" ]; then
-    sudo docker system prune -a -f --volumes
+     docker system prune -a -f --volumes
     echo "[*] Done"
 
 elif [ "$choice" == "7" ]; then
-    sudo docker images --format "{{.Repository}}" | grep "strategy" | xargs -r sudo docker rmi -f
+     docker images --format "{{.Repository}}" | grep "strategy" | xargs -r  docker rmi -f
     echo "[*] Done"
 
 else
@@ -172,4 +172,4 @@ case $OS in
         ;;  
 esac
 
-sudo docker compose up --remove-orphans -d
+ docker compose up --remove-orphans -d
