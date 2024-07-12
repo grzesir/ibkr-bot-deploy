@@ -13,13 +13,6 @@ fi
 # .env setup
 cd "$dir"
 
-# Free ports
-docker ps --format "{{.Names}}" | grep 'strategy' | xargs -r docker kill > /dev/null
-docker ps --format "{{.Names}}" | grep 'ib-gateway' | xargs -r docker kill > /dev/null
-
-# Reset .env if any
-rm -f "$dir/.env"
-
 # Ensure all required environment variables are set
 : "${IBKR_USERNAME:?Environment variable IBKR_USERNAME is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
 : "${IBKR_PASSWORD:?Environment variable IBKR_PASSWORD is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
@@ -83,9 +76,12 @@ cat "$dir/environment/.pref" >> .env
 # Load env variables
 source "$dir/.env"
 
+# Fix the GitHub repository URL
+repo_url=$(echo $LUMIBOT_STRATEGY_GITHUB_URL | sed 's/https:\/\/github.com\///')
+
 # Clone the repository only if the directory does not exist
 if [ ! -d "$dir/environment/bot" ]; then
-    git clone https://${GITHUB_TOKEN}@github.com/${LUMIBOT_STRATEGY_GITHUB_URL} "$dir/environment/bot" || { echo "Probably not logged into git. Exiting..."; exit 1; }
+    git clone https://${GITHUB_TOKEN}@github.com/${repo_url} "$dir/environment/bot" || { echo "Probably not logged into git. Exiting..."; exit 1; }
 else
     echo "Directory $dir/environment/bot already exists. Skipping clone."
 fi

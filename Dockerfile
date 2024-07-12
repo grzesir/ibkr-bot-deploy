@@ -8,8 +8,9 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     docker.io \
     git \
-    lsof \
+    net-tools \
     curl \
+    lsof \
     sudo
 
 # Copy the entire content of the local directory to /app in the container
