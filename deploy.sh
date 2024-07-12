@@ -20,46 +20,30 @@ docker ps --format "{{.Names}}" | grep 'ib-gateway' | xargs -r docker kill > /de
 # Reset .env if any
 rm -f "$dir/.env"
 
+# Ensure all required environment variables are set
+: "${IBKR_USERNAME:?Environment variable IBKR_USERNAME is required}"
+: "${IBKR_PASSWORD:?Environment variable IBKR_PASSWORD is required}"
+: "${LUMIBOT_STRATEGY_GITHUB_URL:?Environment variable LUMIBOT_STRATEGY_GITHUB_URL is required}"
+: "${TRADING_MODE:?Environment variable TRADING_MODE is required}"
+: "${CONFIG_CHOICE:?Environment variable CONFIG_CHOICE is required}"
+
+# Normalize the IBKR_IS_PAPER variable to lowercase
+IBKR_IS_PAPER=$(echo "${IBKR_IS_PAPER:-true}" | tr '[:upper:]' '[:lower:]')
+
 # Echo the env variable IBKR_USERNAME to the user
 echo "IBKR_USERNAME: $IBKR_USERNAME"
 
-# Read user choice from environment variable
-choice="${TRADING_MODE:-}"
-
-if [ "$choice" == "1" ]; then
-    echo "[*] Will Deploy Live"
-    printf "TRADING_MODE=live\n" >> .env
-    PORT=4003
-
-elif [ "$choice" == "2" ]; then
+# Determine the trading mode based on IBKR_IS_PAPER
+if [ "$IBKR_IS_PAPER" == "true" ]; then
     printf "TRADING_MODE=paper\n" >> .env
     PORT=4004
     echo "[*] Will Deploy Paper"
-
-elif [ "$choice" == "3" ]; then
-    printf "TRADING_MODE=both\n" >> .env
-    PORT=4004
-    echo "[*] Will Deploy Both"
-
-elif [ "$choice" == "4" ]; then
-    rm -f "environment/.cred"
-    echo "[*] Credentials Reset"
-
-elif [ "$choice" == "5" ]; then
-    rm -f "environment/.pref"
-    echo "[*] Settings Reset"
-
-elif [ "$choice" == "6" ]; then
-     docker system prune -a -f --volumes
-    echo "[*] Done"
-
-elif [ "$choice" == "7" ]; then
-     docker images --format "{{.Repository}}" | grep "strategy" | xargs -r  docker rmi -f
-    echo "[*] Done"
-
+elif [ "$IBKR_IS_PAPER" == "false" ]; then
+    printf "TRADING_MODE=live\n" >> .env
+    PORT=4003
+    echo "[*] Will Deploy Live"
 else
-    echo "Choice was $choice"
-    echo "Invalid choice. Exiting..."
+    echo "Invalid value for IBKR_IS_PAPER: $IBKR_IS_PAPER. Expected 'true' or 'false'. Exiting..."
     exit 1
 fi
 
