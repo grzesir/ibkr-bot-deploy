@@ -1,0 +1,6 @@
+{
+    "name": "ibkr-test",
+    "scripts": {
+      "postdeploy": "./deploy.sh"
+    }
+  }
