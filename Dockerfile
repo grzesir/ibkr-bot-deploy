@@ -7,6 +7,7 @@ WORKDIR /app
 # Install required packages
 RUN apt-get update && apt-get install -y \
     docker.io \
+    docker-compose \
     git \
     net-tools \
     curl \
