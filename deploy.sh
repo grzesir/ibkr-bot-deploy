@@ -26,6 +26,7 @@ rm -f "$dir/.env"
 : "${LUMIBOT_STRATEGY_GITHUB_URL:?Environment variable LUMIBOT_STRATEGY_GITHUB_URL is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
 : "${TRADING_MODE:?Environment variable TRADING_MODE is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
 : "${CONFIG_CHOICE:?Environment variable CONFIG_CHOICE is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
+: "${GITHUB_TOKEN:?Environment variable GITHUB_TOKEN is required. In Heroku you can set it in the Config Vars section of the app Settings.}"
 
 # Normalize the IBKR_IS_PAPER variable to lowercase
 IBKR_IS_PAPER=$(echo "${IBKR_IS_PAPER:-true}" | tr '[:upper:]' '[:lower:]')
@@ -48,7 +49,7 @@ else
 fi
 
 # Check if port is in use and find an available port if necessary
-while lsof -ti:$PORT > /dev/null; do
+while netstat -tuln | grep ":$PORT " > /dev/null; do
     echo "Port $PORT is in use. Exiting..."
     exit 1
 done
@@ -84,7 +85,7 @@ source "$dir/.env"
 
 # Clone the repository only if the directory does not exist
 if [ ! -d "$dir/environment/bot" ]; then
-    git clone "$bot_repo" "$dir/environment/bot" || { echo "Probably not logged into git. Exiting..."; exit 1; }
+    git clone https://${GITHUB_TOKEN}@github.com/${LUMIBOT_STRATEGY_GITHUB_URL} "$dir/environment/bot" || { echo "Probably not logged into git. Exiting..."; exit 1; }
 else
     echo "Directory $dir/environment/bot already exists. Skipping clone."
 fi
@@ -156,4 +157,4 @@ case $OS in
         ;;  
 esac
 
- docker compose up --remove-orphans -d
+docker compose up --remove-orphans -d
